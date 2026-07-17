@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <title>그래서 우리 언제 만나?</title>
+        <style>
+    body {
+    background-color: #f4f4fb;
+    font-family: sans-serif;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+    h1 {
+    text-align: center;
+    color: #6c5ce7;
+}
+
+    input, button {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    margin: 4px 2px;
+}
+
+    button {
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#일정칸 p {
+    background-color: white;
+    padding: 14px 16px;
+    border-radius: 10px;
+    margin: 8px 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.중요 {
+    border-left: 5px solid #e74c3c;
+    color: #c0392b;
+    font-weight: bold;
+}
+
+#일정칸 button {
+    background-color: #ff7675;
+    padding: 6px 12px;
+    font-size: 13px;
+}
+        </style>
+    </head>
+    <body>
+        <h1>그래서 우리 언제 만나?</h1>
+
+        <input type="date" id="날짜입력">
+        <input type="text" id="내용입력" placeholder="약속 내용 입력">
+        <label><input type="checkbox" id="중요체크">중요</label>
+        <button onclick="일정추가()">추가</button>
+
+        <div id="일정칸"></div>
+        
+        <script>
+            let 일정목록 = [];
+
+            function 일정추가() {
+                const 날짜 = document.getElementById("날짜입력").value;
+                const 내용 = document.getElementById("내용입력").value;
+                const 중요 = document.getElementById("중요체크").checked;
+
+                일정목록.push({날짜: 날짜, 내용: 내용, 중요: 중요});
+
+                목록보여주기();
+            }
+
+            function 목록보여주기() {
+                일정목록.sort(function(a,b) {
+                    if(a.날짜<b.날짜) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                })
+                const 일정칸 = document.getElementById("일정칸");
+                일정칸.innerHTML=""
+                for(let i = 0; i<일정목록.length; i++) {
+                    const 일정 = 일정목록[i];
+
+                    let 별표 = "";
+                    let 클래스 = "";
+                    if(일정.중요) {
+                        별표 = "⭐";
+                        클래스 = "중요";
+                    }
+
+                    일정칸.innerHTML += "<p class= '"+ 클래스 +"'>" + 별표 + 일정.날짜 + "-" + 일정.내용 + "<button onclick ='일정삭제(" + i + ")'>삭제</button> </p>";
+                }
+                저장하기();
+            }
+            
+            function 일정삭제(번호) {
+                일정목록.splice(번호, 1);
+                목록보여주기();
+            }
+            function 저장하기() {
+                localStorage.setItem("일정", JSON.stringify(일정목록));
+            }
+            const 저장된일정 = localStorage.getItem("일정");
+            if(저장된일정) {
+                일정목록 = JSON.parse(저장된일정);
+            }
+            목록보여주기();
+</script>
+</body>
+</html>
